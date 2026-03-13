@@ -1,0 +1,12 @@
+{
+  "name": "spread-member-navbar",
+  "version": "0.1.0",
+  "description": "Member portal navigation bar for Spread.co — authenticated members",
+  "scripts": {
+    "build": "weweb build",
+    "serve": "weweb serve"
+  },
+  "devDependencies": {
+    "@weweb/cli": "latest"
+  }
+}
