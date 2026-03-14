@@ -140,15 +140,16 @@
         href="https://ceranovaai.com"
         target="_blank"
         rel="noopener noreferrer"
+        title="Built by CeraNova"
         class="spread-member-navbar__ceranovanav"
       >
+        <img :src="ceraNovaIcon" class="spread-member-navbar__ceranovanav-icon" width="32" height="32" alt="CeraNova" />
         <span class="spread-member-navbar__ceranovanav-content">
           <span class="spread-member-navbar__ceranovanav-built-by">Built by</span>
           <span class="spread-member-navbar__ceranovanav-brand">
             <span class="spread-member-navbar__ceranovanav-cera">Cera</span><span class="spread-member-navbar__ceranovanav-nova">Nova</span>
           </span>
         </span>
-        <img :src="ceraNovaIcon" class="spread-member-navbar__ceranovanav-icon" width="32" height="32" alt="CeraNova" />
       </a>
     </nav>
 
@@ -832,15 +833,15 @@ export default {
 
 /* ── CERANOVANAV BADGE ───────────────────────────────────────────────── */
 .spread-member-navbar__ceranovanav {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 16px 12px 19px; margin-top: auto; flex-shrink: 0;
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 12px 11px 13px; margin-top: auto; flex-shrink: 0;
   border-top: 1px solid rgba(255,255,255,0.1);
   text-decoration: none; overflow: hidden; white-space: nowrap;
   transition: background 0.15s ease;
 }
 .spread-member-navbar__ceranovanav:hover { background: rgba(255,255,255,0.06); }
 .spread-member-navbar__ceranovanav-content {
-  display: flex; flex-direction: column; flex: 1; min-width: 0;
+  display: flex; flex-direction: column; flex-shrink: 0;
   opacity: 0; pointer-events: none; transition: opacity 0.15s ease 0.05s;
 }
 .spread-member-navbar__ceranovanav-icon {
