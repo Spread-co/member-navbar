@@ -200,6 +200,21 @@
         <div class="spread-member-navbar__drawer-footer">
           <button class="spread-member-navbar__drawer-signout" @click="handleLogout; closeMobileDrawer();">Sign out</button>
         </div>
+        <a
+          href="https://ceranovaai.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Built by CeraNova"
+          class="spread-member-navbar__drawer-ceranovanav"
+        >
+          <img :src="ceraNovaIcon" class="spread-member-navbar__ceranovanav-icon" width="32" height="32" alt="CeraNova" />
+          <span class="spread-member-navbar__drawer-ceranovanav-content">
+            <span class="spread-member-navbar__ceranovanav-built-by">Built by</span>
+            <span class="spread-member-navbar__ceranovanav-brand">
+              <span class="spread-member-navbar__ceranovanav-cera">Cera</span><span class="spread-member-navbar__ceranovanav-nova">Nova</span>
+            </span>
+          </span>
+        </a>
       </nav>
     </div>
   </div>
@@ -845,7 +860,7 @@ export default {
   opacity: 0; pointer-events: none; transition: opacity 0.15s ease 0.05s;
 }
 .spread-member-navbar__ceranovanav-icon {
-  flex-shrink: 0; width: 32px; height: 32px; opacity: 0.85; border-radius: 6px;
+  flex-shrink: 0; width: 32px; height: 32px; opacity: 0.5; border-radius: 6px; transition: opacity 0.2s ease;
 }
 .spread-member-navbar__ceranovanav-built-by {
   font-size: 10px; font-weight: 400; color: #9ca3af;
@@ -859,8 +874,22 @@ export default {
 .spread-member-navbar__ceranovanav-nova { color: #c0392b; }
 @media (min-width: 768px) {
   .spread-member-navbar--sidebar-open .spread-member-navbar__ceranovanav-content { opacity: 1; }
+  .spread-member-navbar--sidebar-open .spread-member-navbar__ceranovanav-icon { opacity: 0.85; }
 }
 @media (min-width: 1024px) {
   .spread-member-navbar__sidebar:hover .spread-member-navbar__ceranovanav-content { opacity: 1; }
+  .spread-member-navbar__sidebar:hover .spread-member-navbar__ceranovanav-icon { opacity: 0.85; }
+}
+/* Mobile drawer CeraNova badge */
+.spread-member-navbar__drawer-ceranovanav {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 16px; flex-shrink: 0; margin-top: auto;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  text-decoration: none; transition: background 0.15s ease;
+}
+.spread-member-navbar__drawer-ceranovanav:hover { background: rgba(255,255,255,0.06); }
+.spread-member-navbar__drawer-ceranovanav .spread-member-navbar__ceranovanav-icon { opacity: 0.85; }
+.spread-member-navbar__drawer-ceranovanav-content {
+  display: flex; flex-direction: column;
 }
 </style>
