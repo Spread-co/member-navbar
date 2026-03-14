@@ -134,6 +134,22 @@
           <span class="spread-member-navbar__sidebar-label">Sign out</span>
         </button>
       </div>
+
+      <!-- ── CERANOVANAV BADGE ─────────────────────────────────────────── -->
+      <a
+        href="https://ceranovaai.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="spread-member-navbar__ceranovanav"
+      >
+        <span class="spread-member-navbar__ceranovanav-content">
+          <span class="spread-member-navbar__ceranovanav-built-by">Built by</span>
+          <span class="spread-member-navbar__ceranovanav-brand">
+            <span class="spread-member-navbar__ceranovanav-cera">Cera</span><span class="spread-member-navbar__ceranovanav-nova">Nova</span>
+          </span>
+        </span>
+        <img :src="ceraNovaIcon" class="spread-member-navbar__ceranovanav-icon" width="32" height="32" alt="CeraNova" />
+      </a>
     </nav>
 
     <!-- ── MOBILE DRAWER ──────────────────────────────────────────────── -->
@@ -190,6 +206,8 @@
 
 <script>
 /* eslint-disable no-unused-vars */
+import ceraNovaIcon from '../MainIcon (64x64).png';
+
 const ICONS = {
   home:     '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
   shop:     '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>',
@@ -297,6 +315,7 @@ export default {
       _alertPoll:       null,
       _cartPoll:        null,
       _realtimeWs:      null,
+      ceraNovaIcon,
     };
   },
 
@@ -810,4 +829,37 @@ export default {
   transition: background 0.15s ease;
 }
 .spread-member-navbar__drawer-signout:hover { background: rgba(185,28,28,0.28); color: #FEE2E2; }
+
+/* ── CERANOVANAV BADGE ───────────────────────────────────────────────── */
+.spread-member-navbar__ceranovanav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px 12px 19px; margin-top: auto; flex-shrink: 0;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  text-decoration: none; overflow: hidden; white-space: nowrap;
+  transition: background 0.15s ease;
+}
+.spread-member-navbar__ceranovanav:hover { background: rgba(255,255,255,0.06); }
+.spread-member-navbar__ceranovanav-content {
+  display: flex; flex-direction: column; flex: 1; min-width: 0;
+  opacity: 0; pointer-events: none; transition: opacity 0.15s ease 0.05s;
+}
+.spread-member-navbar__ceranovanav-icon {
+  flex-shrink: 0; width: 32px; height: 32px; opacity: 0.85; border-radius: 6px;
+}
+.spread-member-navbar__ceranovanav-built-by {
+  font-size: 10px; font-weight: 400; color: #9ca3af;
+  line-height: 1.3; font-family: var(--spread-font-family);
+}
+.spread-member-navbar__ceranovanav-brand {
+  font-size: 12px; font-weight: 600; line-height: 1.3;
+  font-family: var(--spread-font-family);
+}
+.spread-member-navbar__ceranovanav-cera { color: #e6d8ca; }
+.spread-member-navbar__ceranovanav-nova { color: #c0392b; }
+@media (min-width: 768px) {
+  .spread-member-navbar--sidebar-open .spread-member-navbar__ceranovanav-content { opacity: 1; }
+}
+@media (min-width: 1024px) {
+  .spread-member-navbar__sidebar:hover .spread-member-navbar__ceranovanav-content { opacity: 1; }
+}
 </style>

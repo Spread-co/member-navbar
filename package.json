@@ -1,6 +1,6 @@
 {
   "name": "spread-member-navbar",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Member portal navigation bar for Spread.co — authenticated members",
   "scripts": {
     "build": "weweb build -- name=spread-member-navbar type=element",
