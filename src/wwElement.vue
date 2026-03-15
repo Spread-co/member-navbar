@@ -998,7 +998,7 @@ export default {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
 }
 :global(html.dark) .spread-member-navbar__user-popover-name {
-  color: #f5f0eb;
+  color: #e6d8ca;
 }
 :global(html.dark) .spread-member-navbar__user-popover-email {
   color: rgba(230, 216, 202, 0.55);
@@ -1011,7 +1011,7 @@ export default {
 }
 :global(html.dark) .spread-member-navbar__user-popover-item:hover {
   background: rgba(230, 216, 202, 0.07);
-  color: #f5f0eb;
+  color: #e6d8ca;
 }
 :global(html.dark) .spread-member-navbar__user-popover-signout {
   color: #f87171;
@@ -1021,7 +1021,7 @@ export default {
 }
 /* Mobile drawer header name/email (drawer bg is Tyrian — stays) */
 :global(html.dark) .spread-member-navbar__drawer-name {
-  color: #f5f0eb;
+  color: #e6d8ca;
 }
 :global(html.dark) .spread-member-navbar__drawer-email {
   color: rgba(230, 216, 202, 0.55);
