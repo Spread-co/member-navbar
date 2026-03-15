@@ -44,7 +44,7 @@
         </button>
       </div>
 
-      <div class="spread-member-navbar__brand" @click="navigate('/', 'Home')">
+      <div class="spread-member-navbar__brand" @click="navigate('/', 'Home')" role="button" tabindex="0" aria-label="Go to home" title="Home">
         <img class="spread-member-navbar__logo spread-member-navbar__logo--full" :src="content.logoUrl" alt="Spread.co" />
         <img class="spread-member-navbar__logo spread-member-navbar__logo--mark" :src="content.logoMarkUrl" alt="Spread.co" />
       </div>
@@ -73,6 +73,36 @@
               <path d="M16 10a4 4 0 0 1-8 0"/>
             </svg>
             <span class="spread-member-navbar__icon-badge" v-if="cartCount > 0">{{ cartCount > 99 ? '99+' : cartCount }}</span>
+          </button>
+
+          <!-- Theme toggle -->
+          <button
+            v-if="content.showThemeToggle !== false"
+            class="spread-member-navbar__icon-btn spread-member-navbar__theme-toggle"
+            :class="`spread-member-navbar__theme-toggle--${themeMode}`"
+            @click="cycleTheme"
+            :title="themeToggleLabel"
+            :data-tooltip="themeToggleLabel"
+            aria-label="Toggle colour theme"
+          >
+            <!-- Moon: dark mode active -->
+            <svg v-if="themeMode === 'dark'" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+            <!-- Sun: light mode active -->
+            <svg v-else-if="themeMode === 'light'" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="5"/>
+              <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+              <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>
+            <!-- Monitor: system preference -->
+            <svg v-else viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
           </button>
 
           <!-- User avatar -->
@@ -332,6 +362,9 @@ export default {
       _cartPoll:        null,
       _realtimeWs:      null,
       ceraNovaIcon,
+      themeMode:        'system',
+      _mq:              null,
+      _mqHandler:       null,
     };
   },
 
@@ -340,12 +373,14 @@ export default {
     this._startAlertPolling();
     this._startCartPolling();
     this._openAlertsChannel();
+    this.initTheme();
   },
 
   beforeUnmount() {
     clearInterval(this._alertPoll);
     clearInterval(this._cartPoll);
     try { if (this._realtimeWs) this._realtimeWs.close(); } catch (_) {}
+    if (this._mq) { try { this._mq.removeEventListener('change', this._mqHandler); } catch (_) {} }
   },
 
   watch: {
@@ -353,12 +388,19 @@ export default {
     'content.accessToken':    { handler() { this._startAlertPolling(); this._startCartPolling(); this._openAlertsChannel(); } },
     'content.pollIntervalAlerts': { handler() { this._startAlertPolling(); } },
     'content.pollIntervalCart':   { handler() { this._startCartPolling(); } },
+    'content.themePreference'(val) {
+      if (val && ['light', 'dark', 'system'].includes(val)) this.applyTheme(val);
+    },
   },
 
   computed: {
     initials() {
       const n = this.content.userName || '';
       return n.split(' ').filter(Boolean).map(p => p[0]).join('').toUpperCase().slice(0, 2) || '?';
+    },
+    themeToggleLabel() {
+      const labels = { system: 'Theme: System', light: 'Theme: Light', dark: 'Theme: Dark' };
+      return labels[this.themeMode] || 'Toggle theme';
     },
     visibleAlerts() {
       const max = this.content.alertBannerMaxCount || 3;
@@ -481,6 +523,43 @@ export default {
 
     onAlertNotificationClick(alertId) {
       this.$emit('trigger-event', { name: 'nav:alert-notification-clicked', event: { alertId } });
+    },
+
+    initTheme() {
+      try {
+        const doc = typeof wwLib !== 'undefined' ? wwLib.getFrontDocument() : document;
+        const win = typeof wwLib !== 'undefined' ? wwLib.getFrontWindow() : window;
+        let mode = this.content?.themePreference;
+        if (!mode || !['light', 'dark', 'system'].includes(mode)) {
+          const cookie = doc.cookie || '';
+          const match = cookie.match(/spread-theme=(light|dark|system)/);
+          mode = match ? match[1] : 'system';
+        }
+        this.applyTheme(mode);
+        this._mqHandler = () => { if (this.themeMode === 'system') this.applyTheme('system'); };
+        try {
+          this._mq = win?.matchMedia?.('(prefers-color-scheme: dark)');
+          this._mq?.addEventListener?.('change', this._mqHandler);
+        } catch (_) {}
+      } catch (_) {}
+    },
+
+    applyTheme(mode) {
+      this.themeMode = mode;
+      try {
+        const doc = typeof wwLib !== 'undefined' ? wwLib.getFrontDocument() : document;
+        const win = typeof wwLib !== 'undefined' ? wwLib.getFrontWindow() : window;
+        const isDark = mode === 'dark' || (mode === 'system' && (win?.matchMedia?.('(prefers-color-scheme: dark)')?.matches ?? false));
+        doc.documentElement.classList.toggle('dark', isDark);
+        doc.cookie = `spread-theme=${mode}; path=/; max-age=${365 * 24 * 60 * 60}; SameSite=Lax`;
+        this.$emit('trigger-event', { name: 'theme:change', event: { mode, isDark } });
+      } catch (_) {}
+    },
+
+    cycleTheme() {
+      const order = ['system', 'light', 'dark'];
+      const next = order[(order.indexOf(this.themeMode) + 1) % order.length];
+      this.applyTheme(next);
     },
   },
 };
@@ -891,5 +970,60 @@ export default {
 .spread-member-navbar__drawer-ceranovanav .spread-member-navbar__ceranovanav-icon { opacity: 0.85; }
 .spread-member-navbar__drawer-ceranovanav-content {
   display: flex; flex-direction: column;
+}
+
+/* ── Theme toggle ──────────────────────────────────────────────────────── */
+.spread-member-navbar__theme-toggle {
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+.spread-member-navbar__theme-toggle--dark {
+  border-color: #bead38;
+  color: #bead38 !important;
+  background: rgba(190, 173, 56, 0.12) !important;
+}
+.spread-member-navbar__theme-toggle--light {
+  border-color: rgba(255, 200, 100, 0.55);
+  color: rgba(255, 220, 130, 0.9) !important;
+}
+.spread-member-navbar__theme-toggle:hover {
+  border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* ── Dark mode overrides (light surfaces) ─────────────────────────────── */
+/* User popover */
+:global(html.dark) .spread-member-navbar__user-popover {
+  background: #1a0f14;
+  border-color: rgba(230, 216, 202, 0.15);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+:global(html.dark) .spread-member-navbar__user-popover-name {
+  color: #f5f0eb;
+}
+:global(html.dark) .spread-member-navbar__user-popover-email {
+  color: rgba(230, 216, 202, 0.55);
+}
+:global(html.dark) .spread-member-navbar__user-popover-divider {
+  border-top-color: rgba(230, 216, 202, 0.12);
+}
+:global(html.dark) .spread-member-navbar__user-popover-item {
+  color: #e6d8ca;
+}
+:global(html.dark) .spread-member-navbar__user-popover-item:hover {
+  background: rgba(230, 216, 202, 0.07);
+  color: #f5f0eb;
+}
+:global(html.dark) .spread-member-navbar__user-popover-signout {
+  color: #f87171;
+}
+:global(html.dark) .spread-member-navbar__user-popover-signout:hover {
+  background: rgba(248, 113, 113, 0.1);
+}
+/* Mobile drawer header name/email (drawer bg is Tyrian — stays) */
+:global(html.dark) .spread-member-navbar__drawer-name {
+  color: #f5f0eb;
+}
+:global(html.dark) .spread-member-navbar__drawer-email {
+  color: rgba(230, 216, 202, 0.55);
 }
 </style>

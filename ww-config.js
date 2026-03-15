@@ -114,6 +114,18 @@ export default {
       bindable: true,
       defaultValue: false,
     },
+    themePreference: {
+      label: { en: 'Theme Preference (light / dark / system)' },
+      type: 'Text',
+      bindable: true,
+      defaultValue: 'system',
+    },
+    showThemeToggle: {
+      label: { en: 'Show Theme Toggle Button' },
+      type: 'OnOff',
+      bindable: true,
+      defaultValue: true,
+    },
   },
   triggerEvents: [
     {
@@ -160,6 +172,11 @@ export default {
       name: 'nav:alert-notification-clicked',
       label: { en: 'On Alert Notification Clicked' },
       event: { alertId: '', headline: '', severity: '', status: '' },
+    },
+    {
+      name: 'theme:change',
+      label: { en: 'On Theme Change' },
+      event: { mode: 'system', isDark: false },
     },
   ],
 };
